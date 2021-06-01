@@ -1,9 +1,10 @@
 import React, { Component } from "react";
-import { Form, Input, Button } from "antd";
+import { Form, Input, Button, message } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 
 import "./login.less";
 import logo from "./images/logo.png";
+import { reqLogin } from "../../api";
 
 // Login router component
 
@@ -41,19 +42,20 @@ export default class Login extends Component {
 
   formRef = React.createRef();
 
-  onFinish = (e) => {
+  onFinish = async (e) => {
     // const { username, password } = e;
     // console.log(username, password);
 
-    // from https://blog.csdn.net/gzericlee/article/details/114986246
-    this.formRef.current
-      .validateFields()
-      .then((values) => {
-        console.log("validate success:", values);
-      })
-      .catch((errInfo) => {
-        console.log("validate failure:", errInfo.values);
-      });
+    // validateFields examples found at https://blog.csdn.net/gzericlee/article/details/114986246
+    const { username, password } = await this.formRef.current.validateFields();
+    const result = await reqLogin(username, password);
+
+    if (result.status === 0) {
+      message.success("login success!");
+      this.props.history.replace("/");
+    } else {
+      message.error("login failure: " + result.msg);
+    }
   };
 
   onReset = () => {
@@ -62,7 +64,7 @@ export default class Login extends Component {
 
   render() {
     return (
-      <div className="login"> 
+      <div className="login">
         <header className="login-header">
           <img src={logo} alt="logo" />
           <h1>Back Store Administration System</h1>
