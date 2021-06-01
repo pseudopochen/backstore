@@ -1,3 +1,5 @@
+// This following configuration for CracoLessPlugin is from https://ant.design/docs/react/use-with-create-react-app
+
 const CracoLessPlugin = require("craco-less");
 
 module.exports = {
@@ -15,6 +17,7 @@ module.exports = {
     },
   ],
 
+  // following config for Babel is from post https://blog.csdn.net/qq_52135740/article/details/116649756
   babel: {
     plugins: [
       [
