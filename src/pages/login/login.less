@@ -1,3 +1,5 @@
+@font-base-size: 30px;
+
 .login {
   width: 100%;
   height: 100%;
@@ -17,7 +19,7 @@
       margin: 0 15px 30px 50px;
     }
 
-    font-size: 50px;
+    font-size: @font-base-size+20px;
   }
 
   .login-content {
@@ -28,21 +30,30 @@
     padding: 20px 40px;
     h2 {
       color: rgba(0, 0, 0, 0.6);
-      font-size: 40px;
+      font-size: @font-base-size+10px;
       text-align: center;
       margin-bottom: 40px;
     }
     .login-form {
       .ant-input {
-        font-size: 30px;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: @font-base-size;
+        // margin-bottom: 20px;
       }
       .ant-input-affix-wrapper {
-        font-size: 30px;
+        font-size: @font-base-size;
+      }
+    
+      .ant-form-item-explain-error {
+          color:yellow;
+          font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif
       }
       .login-form-button {
         width: 100%;
         height: 60px;
-        font-size: 30px;
+        font-size: @font-base-size;
+        font-family: Arial, Helvetica, sans-serif;
+        // margin-bottom: 10px;
       }
     }
   }

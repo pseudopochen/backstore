@@ -1,10 +1,13 @@
 import React, { Component } from "react";
+import { Redirect } from "react-router-dom";
 import { Form, Input, Button, message } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 
 import "./login.less";
-import logo from "./images/logo.png";
+import logo from "../../assets/images/logo.png";
 import { reqLogin } from "../../api";
+import memoryUtils from "../../utils/memoryUtils";
+import storageUtils from "../../utils/storageUtils";
 
 // Login router component
 
@@ -52,6 +55,12 @@ export default class Login extends Component {
 
     if (result.status === 0) {
       message.success("login success!");
+
+      const user = result.user;
+      console.log(result);
+      memoryUtils.user = user;
+      storageUtils.saveUser(user);
+
       this.props.history.replace("/");
     } else {
       message.error("login failure: " + result.msg);
@@ -63,6 +72,11 @@ export default class Login extends Component {
   };
 
   render() {
+    const user = memoryUtils.user;
+    if (user._id) {
+      return <Redirect to="/admin" />;
+    }
+
     return (
       <div className="login">
         <header className="login-header">
@@ -76,12 +90,13 @@ export default class Login extends Component {
             ref={this.formRef}
             name="normal_login"
             className="login-form"
-            initialValues={{ username: "admin", remember: true }}
+            initialValues={{ remember: true }}
             onFinish={this.onFinish}
             onReset={this.onReset}
           >
             <Form.Item name="username" rules={this.usernameRules}>
               <Input
+                size="large"
                 className="login-form-username"
                 prefix={<UserOutlined className="site-form-item-icon" />}
                 placeholder="Username"
@@ -93,6 +108,7 @@ export default class Login extends Component {
               rules={[{ validator: this.passwordValidator }]}
             >
               <Input
+                size="large"
                 className="login-form-password"
                 prefix={<LockOutlined className="site-form-item-icon" />}
                 type="password"
