@@ -1,6 +1,7 @@
 # Retail Back Office Management System
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+It was built using React and the Ant-Design UI Library.
 
 ## Available Scripts
 

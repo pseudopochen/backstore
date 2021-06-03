@@ -12,7 +12,7 @@ import {
   } from "@ant-design/icons";
 
 const menuList = [
-  { title: "home", key: "/home", icon: <HomeOutlined /> },
+  { title: "Home", key: "/home", icon: <HomeOutlined /> },
 
   {
     title: "Merchandise",

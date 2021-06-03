@@ -9,9 +9,6 @@ import "./index.less";
 const { SubMenu } = Menu;
 
 class LeftNav extends Component {
-
-  
-
   getMenuNodes = (mlst, path) => {
     // const path = this.props.location.pathname;
 
@@ -36,17 +33,17 @@ class LeftNav extends Component {
     });
   };
 
-//   componentDidMount() {
-//     this.menuNodes = this.getMenuNodes(menuList);
-//   }
+  //   componentDidMount() {
+  //     this.menuNodes = this.getMenuNodes(menuList);
+  //   }
 
-// static getDerivedStateFromProps() {
-//     this.menuNodes = this.getMenuNodes(menuList);
-// }
+  // static getDerivedStateFromProps() {
+  //     this.menuNodes = this.getMenuNodes(menuList);
+  // }
 
   render() {
     const path = this.props.location.pathname;
-    const menuNodes = this.getMenuNodes(menuList, path)
+    const menuNodes = this.getMenuNodes(menuList, path);
     return (
       <div className="left-nav">
         <Link to="/" className="left-nav-header">

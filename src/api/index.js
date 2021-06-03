@@ -1,4 +1,5 @@
 import ajax from "./ajax";
+// import jsonp from 'jsonp'
 
 // login
 export const reqLogin = (username, password) =>
@@ -6,3 +7,8 @@ export const reqLogin = (username, password) =>
 
 // add user
 export const reqAddUser = (user) => ajax("/manage/user/add", user, "POST");
+
+// request weather
+export const reqWeather = () => {
+
+}

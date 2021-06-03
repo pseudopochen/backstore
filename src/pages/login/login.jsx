@@ -56,7 +56,7 @@ export default class Login extends Component {
     if (result.status === 0) {
       message.success("login success!");
 
-      const user = result.user;
+      const user = result.data;
       console.log(result);
       memoryUtils.user = user;
       storageUtils.saveUser(user);
