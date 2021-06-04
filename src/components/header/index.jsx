@@ -25,7 +25,7 @@ class Header extends Component {
       } else if (item.children) {
         const cItem = item.children.find((citem) => citem.key === path);
         if (cItem) {
-          title = item.title;
+          title = cItem.title;
         }
       }
     });
