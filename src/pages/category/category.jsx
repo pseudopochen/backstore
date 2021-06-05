@@ -3,7 +3,7 @@ import { Card, Table, Button, Modal, Form, Input, message } from "antd";
 import { PlusOutlined, ArrowRightOutlined } from "@ant-design/icons";
 import AddForm from "./add-form";
 
-const categories_fake = [
+export const categories_fake = [
   { parentID: "0", _id: "001", name: "Appliance", __v: 0 },
   { parentID: "0", _id: "002", name: "Computer", __v: 0 },
   { parentID: "0", _id: "003", name: "Book", __v: 0 },
@@ -16,7 +16,7 @@ const categories_fake = [
   // { parentID: "0", _id: "022", name: "abc", __v: 0 },
 ];
 
-const subCategories_001_fake = [
+export const subCategories_001_fake = [
   { parentID: "001", _id: "010", name: "TV", __v: 0 },
   { parentID: "001", _id: "011", name: "Refrigerator", __v: 0 },
   { parentID: "001", _id: "012", name: "Stove", __v: 0 },
@@ -25,7 +25,7 @@ const subCategories_001_fake = [
   { parentID: "001", _id: "015", name: "Microwave Oven", __v: 0 },
 ];
 
-const subCategories_002_fake = [
+export const subCategories_002_fake = [
   { parentID: "002", _id: "016", name: "Desktop", __v: 0 },
   { parentID: "002", _id: "017", name: "Laptop", __v: 0 },
   { parentID: "002", _id: "018", name: "MacBook", __v: 0 },
@@ -50,6 +50,8 @@ export default class Category extends Component {
   showAdd = () => {
     this.setState({ showStatus: 1 }, () => {
       this.addFormRef.setFieldsValue({ parentID: this.state.parentID });
+      //console.log("showAdd, input focus")
+      this.addInputRef.focus({ cursor: "start" });
     });
   };
 
@@ -59,13 +61,19 @@ export default class Category extends Component {
       this.updateFormRef.current.setFieldsValue({
         categoryName: category.name,
       });
-      this.updateInputRef.current.focus({ cursor: "start" });
+      //console.log("showUpdate input focus")
+      this.updateInputRef.current.focus();
     });
   };
 
   // hide modal dialogs
 
   handleCancel = () => {
+    if (this.state.showStatus === 1) {
+      this.addFormRef.resetFields();
+    } else if (this.state.showStatus === 2) {
+      this.updateFormRef.current.resetFields();
+    }
     this.setState({ showStatus: 0 });
   };
 
@@ -73,11 +81,10 @@ export default class Category extends Component {
 
   addCategory = async () => {
     try {
+      this.setState({ showStatus: 0 });
       //const { parentID, categoryName } = this.addFormRef.getFieldsValue();
       const { parentID, categoryName } = await this.addFormRef.validateFields();
       // console.log(parentID, categoryName);
-
-      this.handleCancel();
       let pnam = "0";
       if (parentID !== "0") {
         pnam = this.state.categories.find((c) => c._id === parentID).name;
@@ -138,7 +145,8 @@ export default class Category extends Component {
   updateCategory = async () => {
     //const { categoryName } = this.updateFormRef.current.getFieldsValue();
     try {
-      this.handleCancel();
+      this.setState({ showStatus: 0 });
+
       const { categoryName } =
         await this.updateFormRef.current.validateFields();
 
@@ -159,7 +167,7 @@ export default class Category extends Component {
       //this.updateFormRef.current.resetFields();
       this.getCategories();
     } catch (e) {
-      console.log(e);
+      //console.log(e);
       message.error(e.errorFields[0].errors[0]);
     }
   };
@@ -242,6 +250,17 @@ export default class Category extends Component {
     this.getCategories();
   }
 
+  // componentDidUpdate () {
+  //   if (this.state.showStatus === 1) {
+  //     console.log('componentDidUpdate add focus')
+  //     this.addInputRef.focus()
+  //   }
+  //   if (this.state.showStatus === 2) {
+  //     console.log('componentDidUpdate update focus')
+  //     this.updateInputRef.current.focus()
+  //   }
+  // }
+
   render() {
     const title =
       this.state.parentID === "0" ? (
@@ -290,6 +309,7 @@ export default class Category extends Component {
             categories={this.state.categories}
             parentID={this.state.parentID}
             setForm={(f) => (this.addFormRef = f)}
+            setInput={(f) => (this.addInputRef = f)}
           />
         </Modal>
 

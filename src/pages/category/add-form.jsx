@@ -10,6 +10,7 @@ export default class AddForm extends Component {
     categories: PropTypes.array.isRequired,
     parentID: PropTypes.string.isRequired,
     setForm: PropTypes.func.isRequired,
+    setInput: PropTypes.func.isRequired,
   };
 
   formRef = React.createRef();
@@ -17,12 +18,19 @@ export default class AddForm extends Component {
 
   componentDidMount() {
     this.props.setForm(this.formRef.current);
-    this.inputRef.current.focus({ curser: "end" });
+    this.props.setInput(this.inputRef.current);
+    // console.log("componentDidMount, input focus")
+    // this.inputRef.current.focus({ cursor: "all" });
   }
+
+//   componentDidUpdate() {
+//       this.inputRef.current.focus({cursor: "start"})
+//   }
 
   render() {
     //   if (this.inputRef.current) {
-    // this.inputRef.current.focus({curser: "end"})
+    //     console.log("render, input focus")
+    // this.inputRef.current.focus({cursor: "all",})
     //   }
     const { categories, parentID } = this.props;
     return (
