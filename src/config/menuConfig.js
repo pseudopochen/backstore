@@ -1,42 +1,44 @@
 import {
-    HomeOutlined,
-    UserOutlined,
-    AreaChartOutlined,
-    BarChartOutlined,
-    PieChartOutlined,
-    LineChartOutlined,
-    ToolOutlined,
-    UnorderedListOutlined,
-    IdcardOutlined,
-    AppstoreOutlined,
-  } from "@ant-design/icons";
+  HomeOutlined,
+  UserOutlined,
+  AreaChartOutlined,
+  BarChartOutlined,
+  PieChartOutlined,
+  LineChartOutlined,
+  ToolOutlined,
+  UnorderedListOutlined,
+  IdcardOutlined,
+  AppstoreOutlined,
+} from "@ant-design/icons";
 
 const menuList = [
-  { title: "Home", key: "/home", icon: <HomeOutlined /> },
+  { title: "Home", key: "/home", tkey: "0-0", icon: <HomeOutlined /> },
 
   {
     title: "Merchandise",
     key: "/merchandise",
-    icon: <AppstoreOutlined/>,
+    tkey: "0-1",
+    icon: <AppstoreOutlined />,
     children: [
-      { title: "Category", key: "/category", icon: <UnorderedListOutlined/> },
+      { title: "Category", key: "/category", tkey: "0-1-0",icon: <UnorderedListOutlined /> },
 
-      { title: "Product", key: "/product", icon: <ToolOutlined/> },
+      { title: "Product", key: "/product", tkey: "0-1-1",icon: <ToolOutlined /> },
     ],
   },
 
-  { title: "User", key: "/user", icon: <UserOutlined /> },
+  { title: "User", key: "/user", tkey: "0-2", icon: <UserOutlined /> },
 
-  { title: "Role", key: "/role", icon: <IdcardOutlined/> },
+  { title: "Role", key: "/role", tkey: "0-3", icon: <IdcardOutlined /> },
 
   {
     title: "Charts",
     key: "/charts",
-    icon: <AreaChartOutlined/>,
+    tkey: "0-4",
+    icon: <AreaChartOutlined />,
     children: [
-      { title: "bar", key: "/charts/bar", icon: <BarChartOutlined/> },
-      { title: "line", key: "/charts/line", icon: <LineChartOutlined/> },
-      { title: "pie", key: "/charts/pie", icon: <PieChartOutlined/> },
+      { title: "bar", key: "/charts/bar", tkey: "0-4-0", icon: <BarChartOutlined /> },
+      { title: "line", key: "/charts/line", tkey: "0-4-1", icon: <LineChartOutlined /> },
+      { title: "pie", key: "/charts/pie", tkey: "0-4-2", icon: <PieChartOutlined /> },
     ],
   },
 ];

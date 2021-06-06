@@ -25,7 +25,7 @@ export default class Role extends Component {
           auth_name: "",
         },
         {
-          menus: ["/home", "/role", "/product/", "/category", "/charts/bar"],
+          menus: ["/home", "/role", "/product", "/category", "/charts/bar"],
           _id: "02",
           name: "manager",
           create_time: 1554639521749,
@@ -36,7 +36,7 @@ export default class Role extends Component {
           menus: [
             "/home",
             "/role",
-            "/product/",
+            "/product",
             "/category",
             "/charts/bar",
             "/charts/line",
