@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import { Card, Form, Input, Cascader, Button } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 
@@ -15,7 +15,7 @@ import {
 const { Item } = Form;
 const { TextArea } = Input;
 
-export default class ProductAddUpdate extends Component {
+export default class ProductAddUpdate extends PureComponent {
   constructor(props) {
     super(props);
     const updateProduct = props.location.state;
@@ -142,7 +142,7 @@ export default class ProductAddUpdate extends Component {
       product._id = this.state.updateProduct._id;
     }
 
-    console.log(product);
+    //console.log(product);
     this.props.history.goBack();
   };
 
@@ -161,7 +161,7 @@ export default class ProductAddUpdate extends Component {
         >
           <ArrowLeftOutlined style={{ fontSize: 20 }} />
         </Button>
-        <span>{this.isUpdate ? "Update" : "Add"} Product</span>
+        <span>{this.state.isUpdate ? "Update" : "Add"} Product</span>
       </span>
     );
 
