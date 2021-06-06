@@ -20,7 +20,9 @@ class LeftNav extends Component {
           </Menu.Item>
         );
       } else {
-        const cItem = item.children.find((citem) => citem.key === path);
+        const cItem = item.children.find(
+          (citem) => path.indexOf(citem.key) === 0
+        );
         if (cItem) {
           this.openKey = item.key;
         }
@@ -42,7 +44,11 @@ class LeftNav extends Component {
   // }
 
   render() {
-    const path = this.props.location.pathname;
+    let path = this.props.location.pathname;
+    if (path.indexOf("/product") === 0) {
+      path = "/product";
+    }
+
     const menuNodes = this.getMenuNodes(menuList, path);
     return (
       <div className="left-nav">

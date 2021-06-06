@@ -84,7 +84,14 @@ export default class ProductHome extends Component {
               >
                 detail
               </Button>
-              <Button type="link">update</Button>
+              <Button
+                type="link"
+                onClick={() =>
+                  this.props.history.push("/product/addupdate", product)
+                }
+              >
+                update
+              </Button>
             </span>
           );
         },
@@ -112,7 +119,10 @@ export default class ProductHome extends Component {
     );
 
     const extra = (
-      <Button type="primary">
+      <Button
+        type="primary"
+        onClick={() => this.props.history.push("/product/addupdate")}
+      >
         <PlusOutlined />
         Add
       </Button>

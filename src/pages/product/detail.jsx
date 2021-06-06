@@ -14,11 +14,11 @@ export default class ProductDetail extends Component {
   };
 
   componentDidMount() {
-    console.log(
-      categories_fake,
-      subCategories_001_fake,
-      subCategories_002_fake
-    );
+    // console.log(
+    //   categories_fake,
+    //   subCategories_001_fake,
+    //   subCategories_002_fake
+    // );
 
     const { pCategoryID, categoryID } = this.props.location.state.product;
     console.log(pCategoryID, categoryID);
