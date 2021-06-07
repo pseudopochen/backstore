@@ -1,0 +1,60 @@
+@font-base-size: 30px;
+
+.login {
+  width: 100%;
+  height: 100%;
+  background-image: url("./images/bg.jpg");
+  background-size: cover;
+  font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+
+  .login-header {
+    display: flex;
+    align-items: center;
+    height: 200px;
+    background-color: rgba(219, 130, 13, 0);
+    color: darkblue;
+    img {
+      width: 80px;
+      height: 80px;
+      margin: 0 15px 30px 50px;
+    }
+
+    font-size: @font-base-size+20px;
+  }
+
+  .login-content {
+    width: 600px;
+    height: 500px;
+    background-color: rgba(255, 255, 255, 0.1);
+    margin: 100px auto;
+    padding: 20px 40px;
+    h2 {
+      color: rgba(0, 0, 0, 0.6);
+      font-size: @font-base-size+10px;
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .login-form {
+      .ant-input {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: @font-base-size;
+        // margin-bottom: 20px;
+      }
+      .ant-input-affix-wrapper {
+        font-size: @font-base-size;
+      }
+    
+      .ant-form-item-explain-error {
+          color:yellow;
+          font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif
+      }
+      .login-form-button {
+        width: 100%;
+        height: 60px;
+        font-size: @font-base-size;
+        font-family: Arial, Helvetica, sans-serif;
+        // margin-bottom: 10px;
+      }
+    }
+  }
+}
