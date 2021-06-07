@@ -36,9 +36,9 @@ const menuList = [
     tkey: "0-4",
     icon: <AreaChartOutlined />,
     children: [
-      { title: "bar", key: "/charts/bar", tkey: "0-4-0", icon: <BarChartOutlined /> },
-      { title: "line", key: "/charts/line", tkey: "0-4-1", icon: <LineChartOutlined /> },
-      { title: "pie", key: "/charts/pie", tkey: "0-4-2", icon: <PieChartOutlined /> },
+      { title: "Bar", key: "/charts/bar", tkey: "0-4-0", icon: <BarChartOutlined /> },
+      { title: "Line", key: "/charts/line", tkey: "0-4-1", icon: <LineChartOutlined /> },
+      { title: "Pie", key: "/charts/pie", tkey: "0-4-2", icon: <PieChartOutlined /> },
     ],
   },
 ];

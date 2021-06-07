@@ -14,7 +14,7 @@ export default class AuthForm extends PureComponent {
   constructor(props) {
     super(props);
     this.treeNodes = this.getTreeNodes(menuList);
-    console.log(this.treeNodes)
+    // console.log(this.treeNodes)
 
     const { menus, _id } = this.props.role;
     this.state = {
