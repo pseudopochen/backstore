@@ -1,22 +1,41 @@
 import React, { Component } from "react";
 import { Link, withRouter } from "react-router-dom";
 import { Menu } from "antd";
+import { connect } from "react-redux";
 
 import logo from "../../assets/images/logo.png";
 import menuList from "../../config/menuConfig";
+import { setHeadTitle } from "../../redux/actions";
+
 import "./index.less";
 
 const { SubMenu } = Menu;
 
 class LeftNav extends Component {
   getMenuNodes = (mlst, path) => {
-    // const path = this.props.location.pathname;
+    
+    mlst.forEach((item) => {
+      if (item.key === path) {
+        this.props.setHeadTitle(item.title);
+      } else if (item.children) {
+        item.children.forEach((citem) => {
+          if (citem.key === path) {
+            this.props.setHeadTitle(citem.title);
+          }
+        });
+      }
+    });
 
     return mlst.map((item) => {
       if (!item.children) {
         return (
           <Menu.Item key={item.key} icon={item.icon}>
-            <Link to={item.key}>{item.title}</Link>
+            <Link
+              to={item.key}
+              onClick={() => this.props.setHeadTitle(item.title)}
+            >
+              {item.title}
+            </Link>
           </Menu.Item>
         );
       } else {
@@ -70,4 +89,6 @@ class LeftNav extends Component {
   }
 }
 
-export default withRouter(LeftNav);
+export default connect((state) => ({}), {
+  setHeadTitle,
+})(withRouter(LeftNav));
