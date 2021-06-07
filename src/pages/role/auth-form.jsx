@@ -14,21 +14,13 @@ export default class AuthForm extends PureComponent {
   constructor(props) {
     super(props);
     this.treeNodes = this.getTreeNodes(menuList);
-    //console.log(this.treeNodes)
+    // console.log(this.treeNodes)
 
     const { menus, _id } = this.props.role;
     this.state = {
       checkedKeys: menus,
       _id,
     };
-  }
-
-  static getDerivedStateFromProps(nextProps, prevState) {
-    if (prevState._id !== nextProps.role._id) {
-      return { _id: nextProps.role._id, checkedKeys: nextProps.role.menus };
-    } else {
-      return null;
-    }
   }
 
   getTreeNodes = (menuList) => {
@@ -50,6 +42,14 @@ export default class AuthForm extends PureComponent {
   resetMenus = () => {
     this.setState({checkedKeys: this.props.role.menus});
   };
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    if (prevState._id !== nextProps.role._id) {
+      return { _id: nextProps.role._id, checkedKeys: nextProps.role.menus };
+    } else {
+      return null;
+    }
+  }
 
   render() {
     const { role } = this.props;
