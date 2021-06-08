@@ -1,6 +1,6 @@
 import { combineReducers } from "redux";
 import storageUtils from "../utils/storageUtils";
-import { SET_HEAD_TITLE } from "./action-types";
+import { SET_HEAD_TITLE, RECEIVE_USER, SHOW_ERROR_MSG } from "./action-types";
 
 //
 const initHeadTitle = "Home";
@@ -18,6 +18,11 @@ function headTitle(state = initHeadTitle, action) {
 const initUser = storageUtils.getUser();
 function user(state = initUser, action) {
   switch (action.type) {
+    case RECEIVE_USER:
+      return action.user;
+    case SHOW_ERROR_MSG:
+      const errorMsg = action.errorMsg;
+      return { ...state, errorMsg };
     default:
       return state;
   }

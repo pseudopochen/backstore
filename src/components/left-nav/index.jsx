@@ -13,19 +13,18 @@ const { SubMenu } = Menu;
 
 class LeftNav extends Component {
   getMenuNodes = (mlst, path) => {
-    
     mlst.forEach((item) => {
       if (item.key === path) {
         this.props.setHeadTitle(item.title);
       } else if (item.children) {
         item.children.forEach((citem) => {
           if (citem.key === path) {
+            this.openKey = item.key;
             this.props.setHeadTitle(citem.title);
           }
         });
       }
     });
-
     return mlst.map((item) => {
       if (!item.children) {
         return (
@@ -54,9 +53,11 @@ class LeftNav extends Component {
     });
   };
 
-  //   componentDidMount() {
-  //     this.menuNodes = this.getMenuNodes(menuList);
-  //   }
+    // componentDidUpdate() {
+    //   //this.menuNodes = this.getMenuNodes(menuList);
+    //   let path = this.props.location.pathname;
+      
+    // }
 
   // static getDerivedStateFromProps() {
   //     this.menuNodes = this.getMenuNodes(menuList);
