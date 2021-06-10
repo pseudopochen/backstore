@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import { Card, Table, Button, Modal, Form, Input, message } from "antd";
 import { PlusOutlined, ArrowRightOutlined } from "@ant-design/icons";
+
+import { reqCategories, reqAddCategory, reqUpdateCategory } from "../../api";
 import AddForm from "./add-form";
 
 export const categories_fake = [
@@ -35,17 +37,43 @@ export const subCategories_002_fake = [
 ];
 
 export default class Category extends Component {
-  updateFormRef = React.createRef();
-  updateInputRef = React.createRef();
+  constructor(props) {
+    super(props);
+    this.updateFormRef = React.createRef();
+    this.updateInputRef = React.createRef();
 
-  state = {
-    loading: false,
-    categories: [],
-    subCategories: [],
-    parentID: "0",
-    parentName: "",
-    showStatus: 0, // 0: no modal dialogs, 1: show Add modal, 2: show Update modal
-  };
+    this.state = {
+      loading: false,
+      categories: [],
+      subCategories: [],
+      parentID: "0",
+      parentName: "",
+      showStatus: 0, // 0: no modal dialogs, 1: show Add modal, 2: show Update modal
+    };
+
+    this.columns = [
+      { title: "Name of Category", dataIndex: "name" },
+      {
+        title: "Actions",
+        width: 300,
+        render: (category) => (
+          <span>
+            <Button type="link" onClick={() => this.showUpdate(category)}>
+              update
+            </Button>
+            {this.state.parentID === "0" ? (
+              <Button
+                type="link"
+                onClick={() => this.showSubCategories(category)}
+              >
+                sub-categories
+              </Button>
+            ) : null}
+          </span>
+        ),
+      },
+    ];
+  }
 
   showAdd = () => {
     this.setState({ showStatus: 1 }, () => {
@@ -80,124 +108,136 @@ export default class Category extends Component {
   //
 
   addCategory = async () => {
-    try {
-      this.setState({ showStatus: 0 });
-      //const { parentID, categoryName } = this.addFormRef.getFieldsValue();
-      const { parentID, categoryName } = await this.addFormRef.validateFields();
-      // console.log(parentID, categoryName);
-      let pnam = "0";
-      if (parentID !== "0") {
-        pnam = this.state.categories.find((c) => c._id === parentID).name;
-      }
+    this.setState({ showStatus: 0 });
 
-      let count = String(
-        categories_fake.length +
-          subCategories_001_fake.length +
-          subCategories_002_fake.length +
-          1
-      ).padStart(3, "0");
-      if (parentID === "0") {
-        categories_fake.unshift({
-          parentID: "0",
-          _id: count,
-          name: categoryName,
-          __v: 0,
-        });
-        // console.log(categories_fake);
-        this.setState({ parentID: "0", categories: [...categories_fake] });
-      } else if (parentID === "001") {
-        subCategories_001_fake.unshift({
-          parentID: "001",
-          _id: count,
-          name: categoryName,
-          __v: 0,
-        });
-        this.setState({
-          parentID,
-          parentName: pnam,
-          subCategories: [...subCategories_001_fake],
-        });
-      } else if (parentID === "002") {
-        subCategories_002_fake.unshift({
-          parentID: "002",
-          _id: count,
-          name: categoryName,
-          __v: 0,
-        });
-        this.setState({
-          parentID,
-          parentName: pnam,
-          subCategories: [...subCategories_002_fake],
-        });
-      }
-      //this.setState({})
-      // this.initColumns();
-      // this.getCategories();
-      this.addFormRef.resetFields();
-    } catch (e) {
-      console.log(e);
-      message.error(e.errorFields[0].errors[0]);
+    const { parentID, categoryName } = await this.addFormRef.validateFields();
+    this.addFormRef.resetFields();
+
+    this.setState({ parentID });
+    if (parentID !== "0") {
+      const parentName = this.state.categories.find(
+        (c) => c._id === parentID
+      ).name;
+      this.setState({ parentName });
+    }
+
+    const result = await reqAddCategory(categoryName, parentID);
+    if (result.status === 0) {
+      this.getCategories();
+    } else {
+      message.error(result.msg);
     }
   };
+
+  // addCategory = async () => {
+  //   try {
+  //     this.setState({ showStatus: 0 });
+  //     //const { parentID, categoryName } = this.addFormRef.getFieldsValue();
+  //     const { parentID, categoryName } = await this.addFormRef.validateFields();
+  //     // console.log(parentID, categoryName);
+  //     let pnam = "0";
+  //     if (parentID !== "0") {
+  //       pnam = this.state.categories.find((c) => c._id === parentID).name;
+  //     }
+
+  //     let count = String(
+  //       categories_fake.length +
+  //         subCategories_001_fake.length +
+  //         subCategories_002_fake.length +
+  //         1
+  //     ).padStart(3, "0");
+  //     if (parentID === "0") {
+  //       categories_fake.unshift({
+  //         parentID: "0",
+  //         _id: count,
+  //         name: categoryName,
+  //         __v: 0,
+  //       });
+  //       // console.log(categories_fake);
+  //       this.setState({ parentID: "0", categories: [...categories_fake] });
+  //     } else if (parentID === "001") {
+  //       subCategories_001_fake.unshift({
+  //         parentID: "001",
+  //         _id: count,
+  //         name: categoryName,
+  //         __v: 0,
+  //       });
+  //       this.setState({
+  //         parentID,
+  //         parentName: pnam,
+  //         subCategories: [...subCategories_001_fake],
+  //       });
+  //     } else if (parentID === "002") {
+  //       subCategories_002_fake.unshift({
+  //         parentID: "002",
+  //         _id: count,
+  //         name: categoryName,
+  //         __v: 0,
+  //       });
+  //       this.setState({
+  //         parentID,
+  //         parentName: pnam,
+  //         subCategories: [...subCategories_002_fake],
+  //       });
+  //     }
+  //     //this.setState({})
+  //     // this.initColumns();
+  //     // this.getCategories();
+  //     this.addFormRef.resetFields();
+  //   } catch (e) {
+  //     console.log(e);
+  //     message.error(e.errorFields[0].errors[0]);
+  //   }
+  // };
 
   //
 
   updateCategory = async () => {
-    //const { categoryName } = this.updateFormRef.current.getFieldsValue();
-    try {
-      this.setState({ showStatus: 0 });
+    this.setState({ showStatus: 0 });
 
-      const { categoryName } =
-        await this.updateFormRef.current.validateFields();
+    const { categoryName } = await this.updateFormRef.current.validateFields();
+    this.category.name = categoryName;
 
-      this.category.name = categoryName;
-      let clst;
-      if (this.category.parentID === "0") {
-        clst = categories_fake;
-      } else if (this.category.parentID === "001") {
-        clst = subCategories_001_fake;
-      } else if (this.category.parentID === "002") {
-        clst = subCategories_002_fake;
-      }
-      clst.forEach((c) => {
-        if (c._id === this.category._id) {
-          c.name = this.category.name;
-        }
-      });
-      //this.updateFormRef.current.resetFields();
+    const categoryID = this.category._id;
+    const result = await reqUpdateCategory(categoryID, categoryName);
+    if (result.status === 0) {
       this.getCategories();
-    } catch (e) {
-      //console.log(e);
-      message.error(e.errorFields[0].errors[0]);
+    } else {
+      message.error(result.msg);
     }
   };
 
-  //
+  // updateCategory = async () => {
+  //   //const { categoryName } = this.updateFormRef.current.getFieldsValue();
+  //   try {
+  //     this.setState({ showStatus: 0 });
 
-  initColumns = () => {
-    this.columns = [
-      { title: "Name of Category", dataIndex: "name" },
-      {
-        title: "Actions",
-        width: 300,
-        render: (category) => (
-          <span>
-            <Button type="link" onClick={() => this.showUpdate(category)}>
-              update
-            </Button>
-            {this.state.parentID === "0" ? (
-              <Button
-                type="link"
-                onClick={() => this.showSubCategories(category)}
-              >
-                sub-categories
-              </Button>
-            ) : null}
-          </span>
-        ),
-      },
-    ];
-  };
+  //     const { categoryName } =
+  //       await this.updateFormRef.current.validateFields();
+
+  //     this.category.name = categoryName;
+  //     let clst;
+  //     if (this.category.parentID === "0") {
+  //       clst = categories_fake;
+  //     } else if (this.category.parentID === "001") {
+  //       clst = subCategories_001_fake;
+  //     } else if (this.category.parentID === "002") {
+  //       clst = subCategories_002_fake;
+  //     }
+  //     clst.forEach((c) => {
+  //       if (c._id === this.category._id) {
+  //         c.name = this.category.name;
+  //       }
+  //     });
+  //     //this.updateFormRef.current.resetFields();
+  //     this.getCategories();
+  //   } catch (e) {
+  //     //console.log(e);
+  //     message.error(e.errorFields[0].errors[0]);
+  //   }
+  // };
+
+  //
 
   showCategories = () => {
     this.setState({
@@ -214,38 +254,54 @@ export default class Category extends Component {
     });
   };
 
-  getCategories = () => {
+  getCategories = async (parentID) => {
+    parentID = parentID || this.state.parentID; // if there is input, use the input value, otherwise use the value stored in state
+
     this.setState({ loading: true });
-    if (this.state.parentID === "0") {
-      setTimeout(() => {
-        this.setState(
-          {
-            categories: categories_fake,
-          }
-          // () => {
-          //   console.log("state: ", this.state.categories, this.state.parentID);
-          // }
-        );
-        this.setState({ loading: false });
-      }, 100); // simulate ajax request delays of 100 ms
+    const result = await reqCategories(parentID);
+    this.setState({ loading: false });
+
+    if (result.status === 0) {
+      const categories = result.data;
+      if (parentID === "0") {
+        this.setState({ categories });
+      } else {
+        this.setState({ subCategories: result.data });
+      }
     } else {
-      setTimeout(() => {
-        if (this.state.parentID === "001") {
-          this.setState({
-            subCategories: subCategories_001_fake,
-          });
-        } else if (this.state.parentID === "002") {
-          this.setState({
-            subCategories: subCategories_002_fake,
-          });
-        }
-        this.setState({ loading: false });
-      }, 100);
+      message.error("error fetching category list");
     }
   };
 
+  // getCategories = () => {
+  //   this.setState({ loading: true });
+  //   if (this.state.parentID === "0") {
+  //     setTimeout(() => {
+  //       this.setState(
+  //         {
+  //           categories: categories_fake,
+  //         }
+  //       );
+  //       this.setState({ loading: false });
+  //     }, 100); // simulate ajax request delays of 100 ms
+  //   } else {
+  //     setTimeout(() => {
+  //       if (this.state.parentID === "001") {
+  //         this.setState({
+  //           subCategories: subCategories_001_fake,
+  //         });
+  //       } else if (this.state.parentID === "002") {
+  //         this.setState({
+  //           subCategories: subCategories_002_fake,
+  //         });
+  //       }
+  //       this.setState({ loading: false });
+  //     }, 100);
+  //   }
+  // }
+
   componentDidMount() {
-    this.initColumns();
+    //this.initColumns();
     //console.log(this.columns)
     this.getCategories();
   }

@@ -1,7 +1,10 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { Upload, Modal } from "antd";
+import { Upload, Modal, message } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
+
+import {reqDeleteImg} from '../../api'
+import {BASE_IMG_URL} from '../../utils/constants'
 
 function getBase64(file) {
   return new Promise((resolve, reject) => {
@@ -15,6 +18,7 @@ function getBase64(file) {
 export default class PicturesWall extends Component {
   static propTypes = {
     imgs: PropTypes.array,
+    //setImgs: PropTypes.func.isRequired,
   };
 
   constructor(props) {
@@ -26,7 +30,7 @@ export default class PicturesWall extends Component {
         uid: -index,
         name: img,
         status: "done",
-        url: "http://localhost:5000" + img,
+        url: BASE_IMG_URL + img,
       }));
     }
 
@@ -66,9 +70,14 @@ export default class PicturesWall extends Component {
   //     return this.state.fileList.map((f) => f.name);
   //   };
 
+  getImgs = () => {
+    return this.state.fileList.map((f) => f.name)
+  }
+
   handleCancel = () => this.setState({ previewVisible: false });
 
   handlePreview = async (file) => {
+    //console.log(file)
     if (!file.url && !file.preview) {
       file.preview = await getBase64(file.originFileObj);
     }
@@ -81,14 +90,36 @@ export default class PicturesWall extends Component {
     });
   };
 
-  handleChange = ({ fileList }) => {
+  handleChange = async ({ file, fileList }) => {
+    //console.log("handleChange...", file.status, file);
+
+    if (file.status === "done") {
+      const result = file.response;
+      if (result.status === 0) {
+        message.success("upload success!");
+        const { name, url } = result.data;
+        file.name = name;
+        file.url = url;
+        //console.log(file===fileList[fileList.length - 1])
+      } else {
+        message.error("upload error.");
+      }
+    } else if (file.status === "removed") {
+      const result = await reqDeleteImg(file.name)
+      if (result.status === 0) {
+        message.success('delete image success!')
+      } else {
+        message.error('delete image error.')
+      }
+    }
+
     this.setState({ fileList });
 
-    this.props.setImgs(this.state.fileList.map((f) => f.name));
+    //this.props.setImgs(this.state.fileList.map((f) => f.name));
   };
 
   render() {
-    // console.log("pw props:", this.props.imgs);
+    //console.log("pw props:", this.props.imgs);
     const { previewVisible, previewImage, fileList, previewTitle } = this.state;
     const uploadButton = (
       <div>
@@ -99,15 +130,15 @@ export default class PicturesWall extends Component {
     return (
       <>
         <Upload
-          action="https://www.mocky.io/v2/5cc8019d300000980a055e76" // upload to this address, e.g., "/manage/img/upload"
+          action="/manage/img/upload"
           accept="image/*" // only accept image files
-          name="image" // request name
+          name="image" // request name for POST
           listType="picture-card"
           fileList={fileList} // array of files that have already been uploaded
           onPreview={this.handlePreview}
           onChange={this.handleChange}
         >
-          {fileList.length >= 8 ? null : uploadButton}
+          {fileList.length >= 3 ? null : uploadButton}
         </Upload>
         <Modal
           visible={previewVisible}

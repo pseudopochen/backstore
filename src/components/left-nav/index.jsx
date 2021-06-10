@@ -6,70 +6,103 @@ import { connect } from "react-redux";
 import logo from "../../assets/images/logo.png";
 import menuList from "../../config/menuConfig";
 import { setHeadTitle } from "../../redux/actions";
+import memoryUtils from '../../utils/memoryUtils'
 
 import "./index.less";
 
 const { SubMenu } = Menu;
 
 class LeftNav extends Component {
-  getMenuNodes = (mlst, path) => {
-    mlst.forEach((item) => {
-      if (item.key === path) {
-        this.props.setHeadTitle(item.title);
-      } else if (item.children) {
-        item.children.forEach((citem) => {
-          if (citem.key === path) {
-            this.openKey = item.key;
-            this.props.setHeadTitle(citem.title);
-          }
-        });
-      }
-    });
+  constructor(props) {
+    super(props);
+
+    //const { path, openKey } = this.getPath(menuList, props);
+    this.state = { path: "", openKey: "" };
+
+    this.menuNodes = this.getMenuNodes(menuList);
+  }
+
+  //
+
+  hasAuth = (item) => {
+    const menus = memoryUtils.user.role.menus;
+    const username = memoryUtils.user.username;
+    const { key, isPublic } = item;
+    if (username === 'admin' || isPublic || menus.indexOf(key) !== -1) {
+      return true;
+    } else if (item.children) {
+      return !!item.children.find((c) => menus.indexOf(c.key) !== -1)
+    }
+    return false;
+  }
+
+  //
+  getMenuNodes = (mlst) => {
     return mlst.map((item) => {
-      if (!item.children) {
-        return (
-          <Menu.Item key={item.key} icon={item.icon}>
-            <Link
-              to={item.key}
-              onClick={() => this.props.setHeadTitle(item.title)}
-            >
-              {item.title}
-            </Link>
-          </Menu.Item>
-        );
-      } else {
-        const cItem = item.children.find(
-          (citem) => path.indexOf(citem.key) === 0
-        );
-        if (cItem) {
-          this.openKey = item.key;
+      if (this.hasAuth(item)) {
+        if (!item.children) {
+          return (
+            <Menu.Item key={item.key} icon={item.icon}>
+              <Link
+                to={item.key}
+                onClick={() => this.props.setHeadTitle(item.title)}
+              >
+                {item.title}
+              </Link>
+            </Menu.Item>
+          );
+        } else {
+          return (
+            <SubMenu key={item.key} icon={item.icon} title={item.title}>
+              {this.getMenuNodes(item.children)}
+            </SubMenu>
+          );
         }
-        return (
-          <SubMenu key={item.key} icon={item.icon} title={item.title}>
-            {this.getMenuNodes(item.children)}
-          </SubMenu>
-        );
+      } else {
+        return null;
       }
     });
   };
 
-    // componentDidUpdate() {
-    //   //this.menuNodes = this.getMenuNodes(menuList);
-    //   let path = this.props.location.pathname;
-      
-    // }
+  static getDerivedStateFromProps(nextProps, prevState) {
+    let path = nextProps.location.pathname;
+    //console.log(path, 'prevState: ', prevState)
 
-  // static getDerivedStateFromProps() {
-  //     this.menuNodes = this.getMenuNodes(menuList);
-  // }
+    if (path === prevState.path) {
+      //console.log(prevState)
+      return null;
+    }
 
-  render() {
-    let path = this.props.location.pathname;
     if (path.indexOf("/product") === 0) {
       path = "/product";
     }
 
-    const menuNodes = this.getMenuNodes(menuList, path);
+    let openKey = "";
+    let findTitle = (mlst, parentKey) => {
+      mlst.forEach((item) => {
+        if (item.key === path) {
+          nextProps.setHeadTitle(item.title);
+          if (parentKey) {
+            openKey = parentKey;
+          }
+        } else if (item.children) {
+          findTitle(item.children, item.key)
+        }
+      })
+    }
+
+    findTitle(menuList, null);
+    //console.log("openKey: ", openKey) 
+
+    return { path, openKey };
+  }
+
+  render() {
+
+    const { menuNodes } = this;
+    const { path, openKey } = this.state; //this.getPath(menuList, this.props);
+    //console.log("render--openKey: ", openKey)
+
     return (
       <div className="left-nav">
         <Link to="/" className="left-nav-header">
@@ -81,7 +114,7 @@ class LeftNav extends Component {
           mode="inline"
           theme="dark"
           selectedKeys={[path]}
-          defaultOpenKeys={[this.openKey]}
+          defaultOpenKeys={[openKey]}
         >
           {menuNodes}
         </Menu>

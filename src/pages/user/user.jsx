@@ -1,6 +1,8 @@
 import React, { Component } from "react";
-import { Card, Button, Table, Modal } from "antd";
+import { Card, Button, Table, Modal, message } from "antd";
 import sd from "silly-datetime";
+import { PAGE_SIZE } from '../../utils/constants'
+import { reqUsers, reqDeleteUser, reqAddOrUpdateUser } from '../../api'
 
 import UserForm from "./user-form";
 
@@ -47,14 +49,6 @@ export default class User extends Component {
     ];
   };
 
-  initRoleNames = (roles) => {
-    const roleNames = roles.reduce((pre, role) => {
-      pre[role._id] = role.name;
-      return pre;
-    }, {});
-    this.roleNames = roleNames;
-  };
-
   deleteUser = (user) => {
     const { users } = this.state;
     //console.log(users);
@@ -62,10 +56,16 @@ export default class User extends Component {
       title: `Do you want to delete ${user.username}?`,
 
       // must be arrow function when using "this" inside
-      onOk: () => {
+      onOk: async () => {
         const idx = users.findIndex((u) => u._id === user._id);
         users.splice(idx, 1);
         this.setState({ users: [...users] });
+        const result = await reqDeleteUser(user._id)
+        if (result.status === 0) {
+          message.success('delete user success!');
+        } else {
+          message.error(result.msg);
+        }
       },
       onCancel() {
         //console.log("canceled");
@@ -83,64 +83,81 @@ export default class User extends Component {
     try {
       this.setState({ isShown: false });
 
-      const values = await this.form.validateFields();
+      const user = await this.form.validateFields();
       //   console.log(values);
       this.form.resetFields();
 
       if (this.state.isUpdate) {
-        let { user } = this.state;
-        user = { ...user, ...values };
-        // console.log(user);
-        const idx = this.state.users.findIndex((u) => u._id === user._id);
-        // console.log(idx)
-        this.state.users[idx] = user;
-        this.setState({ user, users: [...this.state.users] });
-      } else {
-        const { username, password, phone, email, role_id } = values;
-        const newUser = {
-          _id: String(this.state.users.length + 1).padStart(3, "0"),
-          username,
-          password,
-          email,
-          phone,
-          create_time: Date.now(),
-          role_id,
-        };
-        this.setState({ users: [newUser, ...this.state.users] });
+        // let { user } = this.state;
+        // user = { ...user, ...values };
+        // // console.log(user);
+        // const idx = this.state.users.findIndex((u) => u._id === user._id);
+        // // console.log(idx)
+        // this.state.users[idx] = user;
+        // this.setState({ user, users: [...this.state.users] });
+        user._id = this.state.user._id
+
       }
+
+      const result = await reqAddOrUpdateUser(user);
+      if (result.status === 0) {
+        message.success(`${this.state.isUpdate ? 'update' : 'add'} user success!`)
+        this.getUsers();
+      }
+
     } catch (e) {
       console.log(e);
     }
   };
 
+  getUsers = async () => {
+    const result = await reqUsers();
+    //console.log(result)
+    if (result.status === 0) {
+      const { users, roles } = result.data;
+      this.initRoleNames(roles);
+      //console.log(users)
+      this.setState({ users, roles })
+    }
+  }
+
+  initRoleNames = (roles) => {
+    const roleNames = roles.reduce((pre, role) => {
+      pre[role._id] = role.name;
+      return pre;
+    }, {});
+    this.roleNames = roleNames;
+  };
+
   componentDidMount() {
-    const users_fake = [
-      {
-        _id: "001",
-        username: "a",
-        password: "xxx",
-        email: "a@b.c",
-        phone: "123-456-7890",
-        create_time: Date.now(),
-        role_id: "01",
-      },
-      {
-        _id: "002",
-        username: "b",
-        password: "xxx",
-        email: "b@c.d",
-        phone: "123-456-7890",
-        create_time: Date.now(),
-        role_id: "02",
-      },
-    ];
-    const roles_fake = [
-      { _id: "01", name: "manager" },
-      { _id: "02", name: "test" },
-    ];
-    this.setState({ users: users_fake, roles: roles_fake });
-    this.initRoleNames(roles_fake);
+    // const users_fake = [
+    //   {
+    //     _id: "001",
+    //     username: "a",
+    //     password: "xxx",
+    //     email: "a@b.c",
+    //     phone: "123-456-7890",
+    //     create_time: Date.now(),
+    //     role_id: "01",
+    //   },
+    //   {
+    //     _id: "002",
+    //     username: "b",
+    //     password: "xxx",
+    //     email: "b@c.d",
+    //     phone: "123-456-7890",
+    //     create_time: Date.now(),
+    //     role_id: "02",
+    //   },
+    // ];
+    // const roles_fake = [
+    //   { _id: "01", name: "manager" },
+    //   { _id: "02", name: "test" },
+    // ];
+    //this.setState({ users: users_fake, roles: roles_fake });
+    //this.initRoleNames(roles_fake);
     // console.log(this.roleNames)
+    this.getUsers();
   }
 
   render() {
@@ -162,7 +179,7 @@ export default class User extends Component {
           rowKey="_id"
           dataSource={users}
           columns={this.columns}
-          pagination={{ defaultPageSize: 5 }}
+          pagination={{ defaultPageSize: PAGE_SIZE }}
         />
 
         <Modal

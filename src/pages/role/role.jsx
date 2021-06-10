@@ -2,9 +2,12 @@ import React, { Component } from "react";
 import { Card, Button, Table, Modal, message } from "antd";
 import sd from "silly-datetime";
 
+import { reqRoles, reqAddRole, reqUpdateRole } from '../../api'
+import { PAGE_SIZE } from '../../utils/constants'
 import AddForm from "./add-form";
 import AuthForm from "./auth-form";
 import memoryUtils from "../../utils/memoryUtils";
+import storageUtils from '../../utils/storageUtils'
 
 const sdf = (t) => sd.format(new Date(t), "YYYY-MM-DD HH:mm:ss");
 
@@ -16,38 +19,38 @@ export default class Role extends Component {
       isShowAuth: false,
       role: {},
       roles: [
-        {
-          menus: ["/home", "/role", "/charts/bar"],
-          _id: "01",
-          name: "test",
-          create_time: 1554639521749,
-          auth_time: 1558410329436,
-          auth_name: "",
-        },
-        {
-          menus: ["/home", "/role", "/product", "/category", "/charts/bar"],
-          _id: "02",
-          name: "manager",
-          create_time: 1554639521749,
-          auth_time: 1558410329436,
-          auth_name: "admin",
-        },
-        {
-          menus: [
-            "/home",
-            "/role",
-            "/product",
-            "/category",
-            "/charts/bar",
-            "/charts/line",
-            "/charts/pie",
-          ],
-          _id: "03",
-          name: "admin",
-          create_time: 1554639521749,
-          auth_time: 1558410329436,
-          auth_name: "admin",
-        },
+        // {
+        //   menus: ["/home", "/role", "/charts/bar"],
+        //   _id: "01",
+        //   name: "test",
+        //   create_time: 1554639521749,
+        //   auth_time: 1558410329436,
+        //   auth_name: "",
+        // },
+        // {
+        //   menus: ["/home", "/role", "/product", "/category", "/charts/bar"],
+        //   _id: "02",
+        //   name: "manager",
+        //   create_time: 1554639521749,
+        //   auth_time: 1558410329436,
+        //   auth_name: "admin",
+        // },
+        // {
+        //   menus: [
+        //     "/home",
+        //     "/role",
+        //     "/product",
+        //     "/category",
+        //     "/charts/bar",
+        //     "/charts/line",
+        //     "/charts/pie",
+        //   ],
+        //   _id: "03",
+        //   name: "admin",
+        //   create_time: 1554639521749,
+        //   auth_time: 1558410329436,
+        //   auth_name: "admin",
+        // },
       ],
     };
     this.columns = [
@@ -82,22 +85,31 @@ export default class Role extends Component {
       this.form.resetFields();
       this.setState({ isShowAdd: false });
 
-      const newRole = {
-        menus: [],
-        _id: String(this.state.roles.length + 1).padStart(2, "0"),
-        name: roleName,
-        create_time: Date.now(),
-        auth_time: null,
-        auth_name: "",
-      };
+      const result = await reqAddRole(roleName);
+      if (result.status === 0) {
+        message.success("add role success!");
+        const role = result.data;
+        //console.log(role)
+        this.setState({ roles: [role, ...this.state.roles] });
+      } else {
+        message.error(result.msg);
+      }
+      // const newRole = {
+      //   menus: [],
+      //   // _id: String(this.state.roles.length + 1).padStart(2, "0"),
+      //   name: roleName,
+      //   create_time: Date.now(),
+      //   auth_time: null,
+      //   auth_name: "",
+      // };
       //console.log(newRole)
-      this.setState((state) => ({ roles: [newRole, ...state.roles] }));
+      // this.setState((state) => ({ roles: [newRole, ...state.roles] }));
     } catch (err) {
       message.error(err.message);
     }
   };
 
-  updateRole = () => {
+  updateRole = async () => {
     this.setState({ isShowAuth: false });
     const { role } = this.state;
     const menus = this.authRef.current.getMenus();
@@ -105,7 +117,22 @@ export default class Role extends Component {
     role.auth_name = memoryUtils.user.username;
     role.auth_time = Date.now();
     // console.log("upateRole: ", role);
-    this.setState({ roles: [...this.state.roles] });
+
+    const result = await reqUpdateRole(role);
+    if (result.status === 0) {
+      if (memoryUtils.user.role._id === role._id) {
+        memoryUtils.user = {};
+        storageUtils.removeUser();
+        this.props.history.replace('/login')
+        message.success('current user permission changed, re-login!')
+      }
+      else {
+        message.success('update success!')
+        this.setState({ roles: [...this.state.roles] });
+      }
+    } else {
+      message.error(result.msg)
+    }
   };
 
   onRow = (role) => {
@@ -116,6 +143,18 @@ export default class Role extends Component {
       },
     };
   };
+
+  getRoles = async () => {
+    const result = await reqRoles();
+    if (result.status === 0) {
+      const roles = result.data;
+      this.setState({ roles })
+    }
+  }
+
+  componentDidMount() {
+    this.getRoles();
+  }
 
   render() {
     const { roles, role, isShowAdd, isShowAuth } = this.state;
@@ -146,7 +185,7 @@ export default class Role extends Component {
           rowKey="_id"
           dataSource={roles}
           columns={this.columns}
-          pagination={{ defaultPageSize: 5 }}
+          pagination={{ defaultPageSize: PAGE_SIZE }}
           rowSelection={{
             type: "radio",
             selectedRowKeys: [role._id],
