@@ -14,7 +14,11 @@ A set of screenshot of the major modules of the app is under "public/screenshots
 
 * Front-end routing (two levels of routing) was built using "react-router-dom".
 
-* State management was built using "redux", "react-redux" with async middleware "redux-thunk". 
+* State management was built using "redux", "react-redux" with async middleware "redux-thunk".
+
+* "PureComponent" was used to improve rendering efficiency.
+
+* React-17 version of the life-cycle methods (including "getDerivedStateFromProps") were used.
 
 ## Techniques Used in the Back-End
 
