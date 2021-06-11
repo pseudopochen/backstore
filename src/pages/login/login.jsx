@@ -1,20 +1,22 @@
 import React, { Component } from "react";
 import { Redirect } from "react-router-dom";
-import { Form, Input, Button, message } from "antd";
+import { connect } from 'react-redux'
+import { Form, Input, Button } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 
 import "./login.less";
 import logo from "../../assets/images/logo.png";
-import { reqLogin } from "../../api";
-import memoryUtils from "../../utils/memoryUtils";
-import storageUtils from "../../utils/storageUtils";
+import { login } from '../../redux/actions'
+// import { reqLogin } from "../../api";
+// import memoryUtils from "../../utils/memoryUtils";
+// import storageUtils from "../../utils/storageUtils";
 
 // Login router component
 
 // antd 4.x form is very different from antd 3.x form
 // examples from https://www.cnblogs.com/haimengqingyuan/p/13526068.html
 
-export default class Login extends Component {
+class Login extends Component {
   usernameRules = [
     {
       required: true,
@@ -51,20 +53,22 @@ export default class Login extends Component {
 
     // validateFields examples found at https://blog.csdn.net/gzericlee/article/details/114986246
     const { username, password } = await this.formRef.current.validateFields();
-    const result = await reqLogin(username, password);
+    this.props.login(username, password)
+    // const result = await reqLogin(username, password);
 
-    if (result.status === 0) {
-      message.success("login success!");
+    // if (result.status === 0) {
+    //   message.success("login success!");
 
-      const user = result.data;
-      console.log(result);
-      memoryUtils.user = user;
-      storageUtils.saveUser(user);
+    //   const user = result.data;
+    //   console.log(result);
+    //   memoryUtils.user = user;
+    //   storageUtils.saveUser(user);
 
-      this.props.history.replace("/");
-    } else {
-      message.error("login failure: " + result.msg);
-    }
+    //   this.props.history.replace("/home");
+    // } else {
+    //   message.error("login failure: " + result.msg);
+    // }
+
   };
 
   onReset = () => {
@@ -72,9 +76,9 @@ export default class Login extends Component {
   };
 
   render() {
-    const user = memoryUtils.user;
-    if (user._id) {
-      return <Redirect to="/admin" />;
+    const user = this.props.user //memoryUtils.user;
+    if (user && user._id) {
+      return <Redirect to="/home" />;
     }
 
     return (
@@ -84,6 +88,7 @@ export default class Login extends Component {
           <h1>Back Store Administration System</h1>
         </header>
         <section className="login-content">
+          <div className={user.errorMsg ? 'error-msg show' : 'error-msg'}>{user.errorMsg}</div>
           <h2>User Login</h2>
 
           <Form
@@ -141,3 +146,8 @@ export default class Login extends Component {
     );
   }
 }
+
+export default connect(
+  state => ({ user: state.user }),
+  { login }
+)(Login)

@@ -1,71 +1,40 @@
 # Retail Back Office Management System
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-It was built using React and the Ant-Design UI Library.
+This project is a back-store administrative system for managing products, users, roles of the users and 3 types of charts. 
 
-## Available Scripts
+The front-end was built using React-17, Redux and the Ant-Design UI Library.
 
-In the project directory, you can run:
+The back-end, which was built using NodeJS, MongoDB, Mongoose and Express, is under another repository named "backstore_server".
 
-### `npm start`
+A set of screenshot of the major modules of the app is under "public/screenshots".
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Techniques Used in the Front-End
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+* Data display and user-interaction were built using "react" and "antd". Rich-text-editor for entering product details was built using "react-draft-wysiwyg". Charts for bar-plot, line-plot and pie-plot were built using "echarts" and "echarts-for-react".
 
-### `npm test`
+* Front-end routing (two levels of routing) was built using "react-router-dom".
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+* State management was built using "redux", "react-redux" with async middleware "redux-thunk". 
 
-### `npm run build`
+## Techniques Used in the Back-End
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+* Product and user data were stored using MongoDB. Schemas were defined for 4 different types of data. I used MongoDB Atlas for hosting the database.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+* The ODM for interactions between Node and MongoDB was Mongoose.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+* Image file uploading was handled using "multer" middleware.
 
-### `npm run eject`
+* Password encription was handled using MD5 implemented in "blueimp-md5".
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+## Interactions between the Front-End and the Back-End
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+* ajax requests implemented using "axios", "jsonp" and promise/async/await.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+* All APIs (20 of them) were tested and updated using "postman" before and during the implementation of the Front-End.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
 
-## Learn More
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
-To learn React, check out the [React documentation](https://reactjs.org/).
 
-### Code Splitting
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
 
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
