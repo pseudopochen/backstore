@@ -1,6 +1,6 @@
 import { combineReducers } from "redux";
 import storageUtils from "../utils/storageUtils";
-import { SET_HEAD_TITLE, RECEIVE_USER, SHOW_ERROR_MSG } from "./action-types";
+import { SET_HEAD_TITLE, RECEIVE_USER, SHOW_ERROR_MSG, RESET_USER } from "./action-types";
 
 //
 const initHeadTitle = "Home";
@@ -23,6 +23,8 @@ function user(state = initUser, action) {
     case SHOW_ERROR_MSG:
       const errorMsg = action.errorMsg;
       return { ...state, errorMsg };
+    case RESET_USER:
+      return {};
     default:
       return state;
   }

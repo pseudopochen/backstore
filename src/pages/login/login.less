@@ -23,11 +23,30 @@
   }
 
   .login-content {
+    position: relative;
     width: 600px;
     height: 500px;
     background-color: rgba(255, 255, 255, 0.1);
     margin: 100px auto;
     padding: 20px 40px;
+    .error-msg {
+      visibility: hidden;
+      position: absolute;
+      top: 0;
+      left: 0;
+      text-align: center;
+      height: 30px;
+      width: 100%;
+      background: #f60c1a;
+      color: #ffffff;
+      font-size: 16px;
+      transform: translateY(-30px);
+      transition: all 0.3s;
+      &.show {
+        visibility: visible;
+        transform: translateY(0);
+      }
+    }
     h2 {
       color: rgba(0, 0, 0, 0.6);
       font-size: @font-base-size+10px;
@@ -43,10 +62,11 @@
       .ant-input-affix-wrapper {
         font-size: @font-base-size;
       }
-    
+
       .ant-form-item-explain-error {
-          color:yellow;
-          font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif
+        color: yellow;
+        font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS",
+          sans-serif;
       }
       .login-form-button {
         width: 100%;

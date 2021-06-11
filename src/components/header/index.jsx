@@ -4,9 +4,11 @@ import { Button, Modal } from "antd";
 import { connect } from "react-redux";
 import sd from "silly-datetime";
 
+import {logout} from "../../redux/actions"
+
 // import menuList from "../../config/menuConfig";
-import memoryUtils from "../../utils/memoryUtils";
-import storageUtils from "../../utils/storageUtils";
+// import memoryUtils from "../../utils/memoryUtils";
+// import storageUtils from "../../utils/storageUtils";
 
 import "./index.less";
 
@@ -39,9 +41,10 @@ class Header extends Component {
     Modal.confirm({
       content: "Are your sure?",
       onOk: () => {
-        storageUtils.removeUser();
-        memoryUtils.user = {};
-        this.props.history.replace("/login");
+        // storageUtils.removeUser();
+        // memoryUtils.user = {};
+        // this.props.history.replace("/login");
+        this.props.logout()
       },
     });
   };
@@ -59,7 +62,7 @@ class Header extends Component {
 
   render() {
     const { currentTime, dayPictureURL, weather } = this.state;
-    const { username } = memoryUtils.user;
+    const username = this.props.user.username //memoryUtils.user;
     const title = this.props.headTitle;
     return (
       <div className="header">
@@ -82,6 +85,6 @@ class Header extends Component {
   }
 }
 export default connect(
-  (state) => ({ headTitle: state.headTitle }),
-  {}
+  (state) => ({ headTitle: state.headTitle, user: state.user }),
+  {logout}
 )(withRouter(Header));

@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 import logo from "../../assets/images/logo.png";
 import menuList from "../../config/menuConfig";
 import { setHeadTitle } from "../../redux/actions";
-import memoryUtils from '../../utils/memoryUtils'
+// import memoryUtils from '../../utils/memoryUtils'
 
 import "./index.less";
 
@@ -25,8 +25,8 @@ class LeftNav extends Component {
   //
 
   hasAuth = (item) => {
-    const menus = memoryUtils.user.role.menus;
-    const username = memoryUtils.user.username;
+    const menus = this.props.user.role.menus;
+    const username = this.props.user.username;
     const { key, isPublic } = item;
     if (username === 'admin' || isPublic || menus.indexOf(key) !== -1) {
       return true;
@@ -123,6 +123,6 @@ class LeftNav extends Component {
   }
 }
 
-export default connect((state) => ({}), {
+export default connect((state) => ({user: state.user}), {
   setHeadTitle,
 })(withRouter(LeftNav));

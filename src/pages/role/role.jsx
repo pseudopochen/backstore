@@ -1,17 +1,20 @@
 import React, { Component } from "react";
 import { Card, Button, Table, Modal, message } from "antd";
 import sd from "silly-datetime";
+import {connect} from "react-redux";
 
+import {logout} from '../../redux/actions'
 import { reqRoles, reqAddRole, reqUpdateRole } from '../../api'
 import { PAGE_SIZE } from '../../utils/constants'
 import AddForm from "./add-form";
 import AuthForm from "./auth-form";
-import memoryUtils from "../../utils/memoryUtils";
-import storageUtils from '../../utils/storageUtils'
+// import memoryUtils from "../../utils/memoryUtils";
+// import storageUtils from '../../utils/storageUtils'
+
 
 const sdf = (t) => sd.format(new Date(t), "YYYY-MM-DD HH:mm:ss");
 
-export default class Role extends Component {
+class Role extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -114,16 +117,17 @@ export default class Role extends Component {
     const { role } = this.state;
     const menus = this.authRef.current.getMenus();
     role.menus = menus;
-    role.auth_name = memoryUtils.user.username;
+    role.auth_name = this.props.user.username;
     role.auth_time = Date.now();
     // console.log("upateRole: ", role);
 
     const result = await reqUpdateRole(role);
     if (result.status === 0) {
-      if (memoryUtils.user.role._id === role._id) {
-        memoryUtils.user = {};
-        storageUtils.removeUser();
-        this.props.history.replace('/login')
+      if (this.props.user.role._id === role._id) {
+        // memoryUtils.user = {};
+        // storageUtils.removeUser();
+        // this.props.history.replace('/login')
+        this.props.logout();
         message.success('current user permission changed, re-login!')
       }
       else {
@@ -223,3 +227,8 @@ export default class Role extends Component {
     );
   }
 }
+
+export default connect(
+  state => ({user: state.user}),
+  {logout}
+)(Role)
